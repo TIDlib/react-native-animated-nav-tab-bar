@@ -7,13 +7,15 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { BottomTabBarWrapper, Dot, Label, TabButton } from "./UIComponents";
 import {
-  BottomTabBarWrapper,
-  Dot,
-  Label,
-  TabButton,
-} from "./UIComponents";
-import { CommonActions, Descriptor, NavigationState, PartialState, Route, TabNavigationState } from "@react-navigation/native";
+  CommonActions,
+  Descriptor,
+  NavigationState,
+  PartialState,
+  Route,
+  TabNavigationState,
+} from "@react-navigation/native";
 import { IAppearanceOptions, TabElementDisplayOptions } from "./types";
 import React, { useEffect, useState } from "react";
 import { I18nManager } from "react-native";
@@ -24,10 +26,24 @@ import { ScreenContainer } from "react-native-screens";
 interface TabBarElementProps {
   state: TabNavigationState<Record<string, object | undefined>>;
   navigation: any;
-  descriptors: Record<string, Descriptor<Record<string, object | undefined>, string, TabNavigationState<Record<string, object | undefined>>, any, {}>>;
+  descriptors: Record<
+    string,
+    Descriptor<
+      Record<string, object | undefined>,
+      string,
+      TabNavigationState<Record<string, object | undefined>>,
+      any,
+      {}
+    >
+  >;
   appearance: IAppearanceOptions;
   tabBarOptions?: any;
   lazy?: boolean;
+  animatedType?: "spring" | "decay" | "timing";
+  animatedOptions?:
+    | Animated.TimingAnimationConfig
+    | Animated.DecayAnimationConfig
+    | Animated.SpringAnimationConfig;
 }
 
 /**
@@ -50,6 +66,8 @@ export default ({
   appearance,
   tabBarOptions,
   lazy,
+  animatedType,
+  animatedOptions,
 }: TabBarElementProps) => {
   // Apprearence options destruction
   const {
@@ -120,11 +138,15 @@ export default ({
    * @returns Animated.CompositeAnimation
    * Use .start() to start the animation
    */
-  const animation = (val: Animated.Value) =>
-    Animated.spring(val, {
+  const animation = (val: Animated.Value) => {
+    const type: typeof animatedType =
+      typeof animatedType !== "undefined" ? animatedType : "spring";
+
+    return Animated[type](val, {
+      ...(animatedOptions as any),
       toValue: 1,
-      useNativeDriver: false,
     });
+  };
 
   /**
    * Helper function that updates the previous position
@@ -196,7 +218,9 @@ export default ({
    * @returns React.Node with the button component
    */
   const createTab = (
-    route: (Route<string> & { state?: NavigationState | PartialState<NavigationState> | undefined; }), 
+    route: Route<string> & {
+      state?: NavigationState | PartialState<NavigationState> | undefined;
+    },
     routeIndex: number
   ) => {
     const focused = routeIndex == state.index;
@@ -209,15 +233,15 @@ export default ({
       options.tabBarLabel !== undefined
         ? options.tabBarLabel
         : options.title !== undefined
-          ? options.title
-          : route.name;
+        ? options.title
+        : route.name;
 
     const accessibilityLabel =
       options.tabBarAccessibilityLabel !== undefined
         ? options.tabBarAccessibilityLabel
         : typeof label === "string"
-          ? `${label}, tab, ${routeIndex + 1} of ${state.routes.length}`
-          : undefined;
+        ? `${label}, tab, ${routeIndex + 1} of ${state.routes.length}`
+        : undefined;
 
     // Render the label next to the icon
     // only if showLabel is true
@@ -374,7 +398,7 @@ export default ({
       flexDirection: "column",
       justifyContent: "flex-end",
       position: "absolute",
-    }
+    },
   });
 
   const { options } = descriptors[state.routes[state.index].key];
@@ -445,17 +469,18 @@ export default ({
               style={
                 I18nManager.isRTL
                   ? {
-                    right: animatedPos.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [prevPos, pos],
-                    }),
-                  }
+                      right: animatedPos.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [prevPos, pos],
+                      }),
+                    }
                   : {
-                    left: animatedPos.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [prevPos, pos],
-                    }),
-                  }}
+                      left: animatedPos.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [prevPos, pos],
+                      }),
+                    }
+              }
               width={width}
               height={height}
             />
@@ -464,4 +489,4 @@ export default ({
       )}
     </React.Fragment>
   );
-}
+};

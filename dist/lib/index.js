@@ -198,24 +198,25 @@ var styles = reactNative.StyleSheet.create({
  * @return function that creates the custom tab bar
  */
 var TabBarElement = (function (_a) {
+    var _b;
     var state = _a.state, navigation = _a.navigation, descriptors = _a.descriptors, appearance = _a.appearance, tabBarOptions = _a.tabBarOptions, lazy = _a.lazy, animatedType = _a.animatedType, animatedOptions = _a.animatedOptions;
     // Apprearence options destruction
     var topPadding = appearance.topPadding, bottomPadding = appearance.bottomPadding, horizontalPadding = appearance.horizontalPadding, tabBarBackground = appearance.tabBarBackground, activeTabBackgrounds = appearance.activeTabBackgrounds, activeColors = appearance.activeColors, floating = appearance.floating, dotCornerRadius = appearance.dotCornerRadius, whenActiveShow = appearance.whenActiveShow, whenInactiveShow = appearance.whenInactiveShow, dotSize = appearance.dotSize, shadow = appearance.shadow, tabButtonLayout = appearance.tabButtonLayout;
     var activeTintColor = tabBarOptions.activeTintColor, inactiveTintColor = tabBarOptions.inactiveTintColor, activeBackgroundColor = tabBarOptions.activeBackgroundColor, tabStyle = tabBarOptions.tabStyle, labelStyle = tabBarOptions.labelStyle;
     // State
-    var _b = React.useState(horizontalPadding), prevPos = _b[0], setPrevPos = _b[1];
-    var _c = React.useState(prevPos), pos = _c[0], setPos = _c[1];
-    var _d = React.useState(0), width = _d[0], setWidth = _d[1];
-    var _e = React.useState(0), height = _e[0], setHeight = _e[1];
+    var _c = React.useState(horizontalPadding), prevPos = _c[0], setPrevPos = _c[1];
+    var _d = React.useState(prevPos), pos = _d[0], setPos = _d[1];
+    var _e = React.useState(0), width = _e[0], setWidth = _e[1];
+    var _f = React.useState(0), height = _f[0], setHeight = _f[1];
     var animatedPos = React.useState(function () { return new reactNative.Animated.Value(1); })[0];
-    var _f = React.useState([state.index]), loaded = _f[0], setLoaded = _f[1];
+    var _g = React.useState([state.index]), loaded = _g[0], setLoaded = _g[1];
     React.useEffect(function () {
         var index = state.index;
         setLoaded(loaded.includes(index) ? loaded : __spreadArrays(loaded, [index]));
     }, [state]);
     // false = Portrait
     // true = Landscape
-    var _g = React.useState(true), isPortrait = _g[0], setIsPortrait = _g[1];
+    var _h = React.useState(true), isPortrait = _h[0], setIsPortrait = _h[1];
     // Reset animation when changing screen orietation
     reactNative.Dimensions.addEventListener("change", function () {
         if ((isPortrait && !didChangeToPortrait()) ||
@@ -452,19 +453,17 @@ var TabBarElement = (function (_a) {
         tabBarVisible && (React__default['default'].createElement(reactNative.View, { pointerEvents: "box-none", style: floating && overlayStyle },
             React__default['default'].createElement(BottomTabBarWrapper, { style: tabStyle, floating: floating, topPadding: topPadding, bottomPadding: bottomPadding, horizontalPadding: horizontalPadding, tabBarBackground: tabBarBackground, shadow: shadow },
                 state.routes.map(createTab),
-                React__default['default'].createElement(Dot, { dotCornerRadius: dotCornerRadius, topPadding: topPadding, activeTabBackground: activeTabBackground, style: reactNative.I18nManager.isRTL
-                        ? {
-                            right: animatedPos.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [prevPos, pos],
-                            }),
-                        }
-                        : {
-                            left: animatedPos.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [prevPos, pos],
-                            }),
-                        }, width: width, height: height }))))));
+                React__default['default'].createElement(Dot, { dotCornerRadius: dotCornerRadius, topPadding: topPadding, activeTabBackground: activeTabBackground, width: width, height: height, style: (_b = {},
+                        _b[reactNative.I18nManager.isRTL ? "right" : "left"] = 0,
+                        _b.transform = [
+                            {
+                                translateY: animatedPos.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [prevPos, pos],
+                                }),
+                            },
+                        ],
+                        _b) }))))));
 });
 
 var defaultAppearance = {

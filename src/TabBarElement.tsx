@@ -466,19 +466,21 @@ export default ({
               dotCornerRadius={dotCornerRadius}
               topPadding={topPadding}
               activeTabBackground={activeTabBackground}
-              width={width}
-              height={height}
               style={{
                 [I18nManager.isRTL ? "right" : "left"]: 0,
                 transform: [
                   {
-                    translateY: animatedPos.interpolate({
+                    translateX: animatedPos.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [prevPos, pos],
+                      outputRange: I18nManager.isRTL
+                        ? [prevPos * -1, pos * -1]
+                        : [prevPos, pos],
                     }),
                   },
                 ],
               }}
+              width={width}
+              height={height}
             />
           </BottomTabBarWrapper>
         </View>

@@ -453,17 +453,19 @@ var TabBarElement = (function (_a) {
         tabBarVisible && (React__default['default'].createElement(reactNative.View, { pointerEvents: "box-none", style: floating && overlayStyle },
             React__default['default'].createElement(BottomTabBarWrapper, { style: tabStyle, floating: floating, topPadding: topPadding, bottomPadding: bottomPadding, horizontalPadding: horizontalPadding, tabBarBackground: tabBarBackground, shadow: shadow },
                 state.routes.map(createTab),
-                React__default['default'].createElement(Dot, { dotCornerRadius: dotCornerRadius, topPadding: topPadding, activeTabBackground: activeTabBackground, width: width, height: height, style: (_b = {},
+                React__default['default'].createElement(Dot, { dotCornerRadius: dotCornerRadius, topPadding: topPadding, activeTabBackground: activeTabBackground, style: (_b = {},
                         _b[reactNative.I18nManager.isRTL ? "right" : "left"] = 0,
                         _b.transform = [
                             {
-                                translateY: animatedPos.interpolate({
+                                translateX: animatedPos.interpolate({
                                     inputRange: [0, 1],
-                                    outputRange: [prevPos, pos],
+                                    outputRange: reactNative.I18nManager.isRTL
+                                        ? [prevPos * -1, pos * -1]
+                                        : [prevPos, pos],
                                 }),
                             },
                         ],
-                        _b) }))))));
+                        _b), width: width, height: height }))))));
 });
 
 var defaultAppearance = {
